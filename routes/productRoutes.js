@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-
+const { getSingleProductReviews } = require("../controllers/reviewController");
 const {
 	createProduct,
 	getAllProducts,
@@ -10,9 +10,13 @@ const {
 	deleteProduct,
 } = require("../controllers/productController");
 
-router.route("/").post(createProduct).get(getAllProducts)
-router.route("/:id").get(getSingleProduct).patch(updateProduct).delete(deleteProduct)
+router.route("/").post(createProduct).get(getAllProducts);
+router
+	.route("/:id")
+	.get(getSingleProduct)
+	.patch(updateProduct)
+	.delete(deleteProduct);
 
-// router.route("/:id/reviews").get(getSingleProductReviews);
+router.route("/:id/reviews").get(getSingleProductReviews);
 
 module.exports = router;
