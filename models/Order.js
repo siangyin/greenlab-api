@@ -44,6 +44,11 @@ const OrderSchema = mongoose.Schema(
 			ref: "User",
 			required: true,
 		},
+		address: {
+			type: mongoose.Schema.ObjectId,
+			ref: "Address",
+			required: true,
+		},
 		clientSecret: {
 			type: String,
 			required: true,
