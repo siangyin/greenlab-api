@@ -3,11 +3,11 @@ const validator = require("validator");
 const bcrypt = require("bcryptjs");
 
 const SingleAddressSchema = mongoose.Schema({
-	name: { type: String, required: true },
-	contact: { type: Number, required: true },
-	address: { type: String, required: true },
-	postalcode: { type: Number, required: true },
-	remark: { type: String, required: false },
+	name: { type: String },
+	contact: { type: Number },
+	address: { type: String },
+	postalcode: { type: Number },
+	remark: { type: String },
 });
 
 const UserSchema = new mongoose.Schema({
