@@ -10,12 +10,20 @@ const {
 	deleteProduct,
 } = require("../controllers/productController");
 
-router.route("/").post(createProduct).get(getAllProducts);
+const {
+	authenticateUser,
+	authorizePermissions,
+} = require("../middleware/authentication");
+
+router
+	.route("/")
+	.post([authenticateUser, authorizePermissions("admin")], createProduct)
+	.get(getAllProducts);
 router
 	.route("/:id")
 	.get(getSingleProduct)
-	.patch(updateProduct)
-	.delete(deleteProduct);
+	.patch([authenticateUser, authorizePermissions("admin")], updateProduct)
+	.delete([authenticateUser, authorizePermissions("admin")], deleteProduct);
 
 router.route("/:id/reviews").get(getSingleProductReviews);
 

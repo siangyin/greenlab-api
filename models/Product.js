@@ -1,17 +1,17 @@
 const mongoose = require("mongoose");
 
-const ImageSchema = new mongoose.Schema({
-	name: {
-		type: String,
-		required: true,
-	},
-	imgUrl: {
-		type: String,
-		trim: true,
-		default:
-			"https://www.gemkom.com.tr/wp-content/uploads/2020/02/NO_IMG_600x600-1.png",
-	},
-});
+// const ImageSchema = new mongoose.Schema({
+// 	name: {
+// 		type: String,
+// 		required: true,
+// 	},
+// 	imgUrl: {
+// 		type: String,
+// 		trim: true,
+// 		default:
+// 			"https://www.gemkom.com.tr/wp-content/uploads/2020/02/NO_IMG_600x600-1.png",
+// 	},
+// });
 
 const ProductSchema = new mongoose.Schema({
 	name: {
@@ -33,7 +33,10 @@ const ProductSchema = new mongoose.Schema({
 		required: [true, "Please provide product description"],
 		maxlength: [1000, "Description can not be more than 1000 characters"],
 	},
-	images: [ImageSchema],
+	image: {
+		type: String,
+		required: true,
+	},
 	category: {
 		type: String,
 		required: [true, "Please provide product category"],
