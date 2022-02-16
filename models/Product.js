@@ -46,11 +46,11 @@ const ProductSchema = new mongoose.Schema({
 		type: Boolean,
 		default: false,
 	},
-	stockQty: {
-		type: Number,
-		required: true,
-		default: 15,
-	},
+	// stockQty: {
+	// 	type: Number,
+	// 	required: true,
+	// 	default: 15,
+	// },
 	tags: [String],
 	averageRating: {
 		type: Number,

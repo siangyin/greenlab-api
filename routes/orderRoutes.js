@@ -9,10 +9,21 @@ const {
 	updateOrder,
 } = require("../controllers/orderController");
 
-router.route("/").post(createOrder).get(getAllOrders);
+const {
+	authenticateUser,
+	authorizePermissions,
+} = require("../middleware/authentication");
 
-router.route("/myorders").get(getCurrentUserOrders);
+router
+	.route("/")
+	.post(authenticateUser, createOrder)
+	.get([authenticateUser, authorizePermissions("admin")], getAllOrders);
 
-router.route("/:id").get(getSingleOrder).patch(updateOrder);
+router.route("/myorders").get(authenticateUser, getCurrentUserOrders);
+
+router
+	.route("/:id")
+	.get(authenticateUser, getSingleOrder)
+	.patch(authenticateUser, updateOrder);
 
 module.exports = router;
