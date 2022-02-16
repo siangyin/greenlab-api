@@ -2,14 +2,6 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
 
-const SingleAddressSchema = mongoose.Schema({
-	name: { type: String },
-	contact: { type: Number },
-	address: { type: String },
-	postalcode: { type: Number },
-	remark: { type: String },
-});
-
 const UserSchema = new mongoose.Schema({
 	name: {
 		type: String,
@@ -36,7 +28,6 @@ const UserSchema = new mongoose.Schema({
 		enum: ["admin", "user"],
 		default: "user",
 	},
-	address: [SingleAddressSchema],
 });
 
 //use function instead or arr fn to point to password in UserSchema
