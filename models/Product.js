@@ -35,6 +35,9 @@ const ProductSchema = new mongoose.Schema({
 	},
 	image: {
 		type: String,
+		trim: true,
+		default:
+			"https://txspicenmore.com/wp-content/uploads/2019/12/no-product.png",
 	},
 	category: {
 		type: String,
