@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const ReviewSchema = mongoose.Schema(
+const ReviewSchema = new mongoose.Schema(
 	{
 		rating: {
 			type: Number,
@@ -16,7 +16,7 @@ const ReviewSchema = mongoose.Schema(
 		},
 		comment: {
 			type: String,
-			required: [true, "Please provide review text"],
+			required: [true, "Please provide review comment"],
 		},
 		userId: {
 			type: mongoose.Schema.ObjectId,
@@ -31,7 +31,6 @@ const ReviewSchema = mongoose.Schema(
 	},
 	{ timestamps: true }
 );
-ReviewSchema.index({ product: 1, user: 1 }, { unique: true });
 
 ReviewSchema.statics.calculateAverageRating = async function (productId) {
 	const result = await this.aggregate([
