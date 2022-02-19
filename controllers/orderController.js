@@ -1,5 +1,7 @@
 const Order = require("../models/Order");
 const Product = require("../models/Product");
+const Address = require("../models/Address");
+const CartItem = require("../models/CartItem");
 const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../errors");
 
@@ -12,56 +14,51 @@ const fakeStripeAPI = async ({ amount, currency }) => {
 
 // CREATE ORDER
 const createOrder = async (req, res) => {
-	const { items: cartItems, tax, shippingFee } = req.body;
+	const { orderItems: cartItems, shippingFee, address } = req.body;
 
 	if (!cartItems || cartItems.length < 1) {
 		throw new CustomError.BadRequestError("No cart items provided");
-	}
-	if (!shippingFee) {
-		throw new CustomError.BadRequestError("Please provide shipping fee");
 	}
 
 	let orderItems = [];
 	let subtotal = 0;
 
-	for (const item of cartItems) {
-		const dbProduct = await Product.findOne({ _id: item.product });
-		if (!dbProduct) {
-			throw new CustomError.NotFoundError(
-				`No product with id : ${item.product}`
-			);
+	for (const idx of cartItems) {
+		const cartDB = await CartItem.findOne({ _id: idx });
+		if (!cartDB) {
+			throw new CustomError.NotFoundError(`No cart data with id : ${idx}`);
 		}
-		const { name, price, image, _id } = dbProduct;
-		const singleOrderItem = {
-			qty: item.qty,
-			name,
-			price,
-			image,
-			product: _id,
-		};
+		const productDB = await Product.findOne({ _id: cartDB.productId });
+
 		// add item to order
-		orderItems = [...orderItems, singleOrderItem];
+		orderItems = [...orderItems, cartDB._id];
 		// calculate subtotal
-		subtotal += item.qty * price;
+		subtotal += Number(cartDB.qty) * Number(productDB.price);
 	}
 	// calculate total
-	const total = tax + shippingFee + subtotal;
+	const total = Number(shippingFee) + subtotal;
 	// get client secret
 	const paymentIntent = await fakeStripeAPI({
 		amount: total,
 		currency: "sgd",
 	});
 
+	const addresscheck = await Address.findOne({ _id: address });
+	if (!addresscheck) {
+		throw new CustomError.NotFoundError(`No address data with id : ${address}`);
+	}
+	console.log(addresscheck);
 	const order = await Order.create({
 		orderItems,
 		total,
 		subtotal,
 		shippingFee,
 		clientSecret: paymentIntent.client_secret,
-		user: req.user.userID,
+		userId: req.user.userID,
+		address: addresscheck._id,
 	});
 
-	res
+	return res
 		.status(StatusCodes.CREATED)
 		.json({ order, clientSecret: order.clientSecret });
 };
