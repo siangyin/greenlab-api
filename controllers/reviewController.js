@@ -6,59 +6,98 @@ const { checkPermissions } = require("../utils");
 
 // CREATE REVIEW
 const createReview = async (req, res) => {
-	const { productId } = req.body;
-	const isValidProduct = await Product.find({ _id: productId });
-	console.log(productId);
+	const { product: productId } = req.body;
+
+	const isValidProduct = await Product.findOne({ _id: productId });
+
 	if (!isValidProduct) {
 		throw new CustomError.NotFoundError(`No product with id : ${productId}`);
 	}
-	req.body.userId = req.user.userID;
-	const alreadySubmitted = await Review.find({
-		productId: productId,
-		userId: req.user.userID,
+
+	const alreadySubmitted = await Review.findOne({
+		product: productId,
+		user: req.user.userID,
 	});
-	console.log(alreadySubmitted);
+
 	if (alreadySubmitted) {
 		throw new CustomError.BadRequestError(
-			"User already submitted review for this product"
+			"Already submitted review for this product"
 		);
 	}
-	console.log({
-		...req.body,
-		productId: productId,
-		userId: req.user.userID,
-	});
-	const review = await Review.create({
-		...req.body,
-		productId: isValidProduct._id,
-		userId: req.user.userID,
-	});
-	return res.status(StatusCodes.CREATED).json(review);
+
+	req.body.user = req.user.userID;
+
+	const review = await Review.create(req.body);
+	res.status(StatusCodes.CREATED).json({ review });
 };
 
 // GET ALL REVIEWS
 const getAllReviews = async (req, res) => {
-	res.send("getAllReviews");
+	const reviews = await Review.find({})
+		.populate({
+			path: "product",
+			select: "category name averageRating numOfReviews",
+		})
+		.populate({ path: "user", select: "name" });
+
+	res.status(StatusCodes.OK).json({ reviews, count: reviews.length });
 };
 
 // GET SINGLE REVIEW
 const getSingleReview = async (req, res) => {
-	res.send("getSingleReview");
+	const { id: reviewId } = req.params;
+
+	const review = await Review.findOne({ _id: reviewId });
+
+	if (!review) {
+		throw new CustomError.NotFoundError(`No review with id ${reviewId}`);
+	}
+
+	res.status(StatusCodes.OK).json({ review });
 };
 
 // GET SINGLE PRODUCT REVIEWS
 const getSingleProductReviews = async (req, res) => {
-	res.send("getSingleProductReviews");
+	const { id: productId } = req.params;
+	const reviews = await Review.find({ product: productId });
+	res.status(StatusCodes.OK).json({ reviews, count: reviews.length });
 };
 
 // UPDATE REVIEW
 const updateReview = async (req, res) => {
-	res.send("updateReview");
+	const { id: reviewId } = req.params;
+	const { rating, title, comment } = req.body;
+
+	const review = await Review.findById(reviewId);
+	// console.log(review);
+	if (!review) {
+		throw new CustomError.NotFoundError(`No review with id ${reviewId}`);
+	}
+	console.log(req.user.role);
+	console.log(review.user);
+	checkPermissions(req.user, review.user);
+
+	review.rating = rating;
+	review.title = title;
+	review.comment = comment;
+
+	await review.save();
+	res.status(StatusCodes.OK).json({ review });
 };
 
 // DELETE REVIEW
 const deleteReview = async (req, res) => {
-	res.send("deleteReview");
+	const { id: reviewId } = req.params;
+
+	const review = await Review.findOne({ _id: reviewId });
+
+	if (!review) {
+		throw new CustomError.NotFoundError(`No review with id ${reviewId}`);
+	}
+
+	checkPermissions(req.user, review.user);
+	await review.remove();
+	res.status(StatusCodes.OK).json({ msg: "Success! Review removed" });
 };
 
 module.exports = {
