@@ -1,4 +1,6 @@
 const User = require("../models/User");
+const Address = require("../models/Address");
+
 const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../errors");
 const {
@@ -37,21 +39,42 @@ const showCurrentUser = async (req, res) => {
 // need to be able to update personal info > to be continue
 // UPDATE USER eg deactivated acct/ update detail
 const updateUser = async (req, res) => {
-	const { email, name } = req.body;
+	const {
+		body: { name, email, address },
+		params: { id: userID },
+	} = req;
 	console.log(req.user);
-	if (!email || !name) {
-		throw new CustomError.BadRequestError("Please provide all values");
+	if (name === "" && email === "" && address === "") {
+		throw new CustomError.BadRequestError("Please provide values");
 	}
-	const user = await User.findOne({ _id: req.user.userID });
+	let user;
+	if (name || email) {
+		user = await User.findByIdAndUpdate({ _id: userID }, req.body, {
+			new: true,
+			runValidators: true,
+		});
+	}
 
-	user.email = email;
-	user.name = name;
-
-	await user.save();
+	let updateUserAdd;
+	if (address) {
+		const findAdd = await Address.findOne({ userId: userID });
+		if (findAdd) {
+			updateUserAdd = await Address.findByIdAndUpdate(
+				{ _id: findAdd._id },
+				{ ...address, userId: userID },
+				{
+					new: true,
+					runValidators: true,
+				}
+			);
+		} else {
+			updateUserAdd = await Address.create({ ...address, userId: userID });
+		}
+	}
 
 	const tokenUser = createTokenUser(user);
 	attachCookiesToResponse({ res, user: tokenUser });
-	res.status(StatusCodes.OK).json({ user: tokenUser });
+	res.status(StatusCodes.OK).json({ user: tokenUser, updateUserAdd });
 };
 
 // UPDATE USER PASSWORD
