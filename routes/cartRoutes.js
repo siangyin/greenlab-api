@@ -15,7 +15,10 @@ const {
 	authorizePermissions,
 } = require("../middleware/authentication");
 
-router.route("/").post(createCartItem).get(getCurrentUserCartItems);
+router
+	.route("/")
+	.post(createCartItem)
+	.get(authenticateUser, getCurrentUserCartItems);
 router
 	.route("/all-items")
 	.get([authenticateUser, authorizePermissions("admin")], getAllCartItems);
