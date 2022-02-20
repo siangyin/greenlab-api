@@ -6,6 +6,15 @@ const CartItemSchema = mongoose.Schema(
 		image: { type: String, required: true },
 		price: { type: Number, required: true },
 		qty: { type: Number, required: true },
+		status: {
+			type: Boolean,
+			default: false,
+		},
+		orderId: {
+			type: mongoose.Schema.ObjectId,
+			ref: "Order",
+			required: false,
+		},
 		productId: {
 			type: mongoose.Schema.ObjectId,
 			ref: "Product",

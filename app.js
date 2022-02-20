@@ -46,11 +46,9 @@ const productRouter = require("./routes/productRoutes");
 const reviewRouter = require("./routes/reviewRoutes");
 const orderRouter = require("./routes/orderRoutes");
 const cartRouter = require("./routes/cartRoutes");
-
+const productionController = require("./controllers/productionController");
 // ROUTES
-// app.get("/", (req, res) => {
-// 	res.send("Hello Greenlab");
-// });
+app.get("/springcleaning", productionController); // production only for test and clearDB
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);

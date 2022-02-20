@@ -24,7 +24,14 @@ const createOrder = async (req, res) => {
 	let subtotal = 0;
 
 	for (const idx of cartItems) {
-		const cartDB = await CartItem.findOne({ _id: idx });
+		const cartDB = await CartItem.findByIdAndUpdate(
+			{ _id: idx },
+			{ status: true },
+			{
+				new: true,
+				runValidators: true,
+			}
+		);
 		if (!cartDB) {
 			throw new CustomError.NotFoundError(`No cart data with id : ${idx}`);
 		}
@@ -47,7 +54,7 @@ const createOrder = async (req, res) => {
 	if (!addresscheck) {
 		throw new CustomError.NotFoundError(`No address data with id : ${address}`);
 	}
-	console.log(addresscheck);
+
 	const order = await Order.create({
 		orderItems,
 		total,
@@ -57,6 +64,17 @@ const createOrder = async (req, res) => {
 		userId: req.user.userID,
 		address: addresscheck._id,
 	});
+
+	for (const eachcart of orderItems) {
+		const updateCart = await CartItem.findByIdAndUpdate(
+			{ _id: eachcart },
+			{ orderId: order._id },
+			{
+				new: true,
+				runValidators: true,
+			}
+		);
+	}
 
 	return res
 		.status(StatusCodes.CREATED)

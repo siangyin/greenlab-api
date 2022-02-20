@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const Address = require("../models/Address");
-
+const Order = require("../models/Order");
+const CartItem = require("../models/CartItem");
 const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../errors");
 const {
@@ -30,10 +31,17 @@ const getSingleUser = async (req, res) => {
 // SHOW CURRENT USER
 const showCurrentUser = async (req, res) => {
 	const user = await User.findOne({ _id: req.user.userID }).select("-password");
+
 	if (!user) {
 		throw new CustomError.NotFoundError(`No user with id : ${req.params.id}`);
 	}
-	res.status(StatusCodes.OK).json({ user });
+
+	const address = await Address.findOne({ userId: req.user.userID });
+	const order = await Order.findOne({ userId: req.user.userID }).populate(
+		"orderItems"
+	);
+
+	res.status(StatusCodes.OK).json({ user, address, order });
 };
 
 // need to be able to update personal info > to be continue

@@ -19,8 +19,7 @@ const createCartItem = async (req, res) => {
 
 	let queryObj = {};
 	const { productId, qty, userId } = req.query;
-	console.log("line 22 re.query");
-	console.log(req.query);
+
 	if (!productId || !qty) {
 		throw new CustomError.NotFoundError(`Must provide productId and qty`);
 	}
@@ -30,7 +29,7 @@ const createCartItem = async (req, res) => {
 	if (!product) {
 		throw new CustomError.NotFoundError(`No product with id : ${productId}`);
 	}
-	console.log(product);
+
 	queryObj.name = product.name;
 	queryObj.image = product.image;
 	queryObj.price = product.price;
@@ -47,7 +46,11 @@ const createCartItem = async (req, res) => {
 	}
 
 	// else, mean have userId, check if same user have same item in cart db.
-	cart = await CartItem.findOne({ userId: userId, productId: product._id });
+	cart = await CartItem.findOne({
+		userId: userId,
+		productId: product._id,
+		status: false,
+	});
 
 	if (cart) {
 		// update cart
