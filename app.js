@@ -2,7 +2,7 @@ require("dotenv").config();
 require("express-async-errors");
 const express = require("express");
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5050;
 const connectDB = require("./db/connectDB");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
@@ -25,12 +25,18 @@ const errorHandlerMiddleware = require("./middleware/error-handler");
 app.set("trust proxy", 1);
 app.use(
 	rateLimiter({
-		windowMs: 15 * 60 * 1000,
-		max: 60,
+		windowMs: 1500 * 60 * 1000,
+		max: 60000,
 	})
 );
 app.use(helmet());
-app.use(cors());
+app.use(
+	cors({
+		origin: process.env.FE_URL,
+		// methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD", "DELETE", "PATCH"],
+		// credentials: true,
+	})
+);
 app.use(xss());
 app.use(mongoSanitize());
 // app.use(morgan("tiny")); // production only
@@ -65,5 +71,5 @@ const start = async () => {
 		app.listen(PORT, console.log(`server is on port ${PORT}`));
 	} catch (error) {}
 };
-
+console.log(process.env.FE_URL);
 start();
