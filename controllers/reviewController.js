@@ -28,7 +28,7 @@ const createReview = async (req, res) => {
 	req.body.user = req.user.userID;
 
 	const review = await Review.create(req.body);
-	res.status(StatusCodes.CREATED).json({ review });
+	res.status(StatusCodes.CREATED).json({ status: "OK", data: review });
 };
 
 // GET ALL REVIEWS
@@ -40,7 +40,9 @@ const getAllReviews = async (req, res) => {
 		})
 		.populate({ path: "user", select: "name" });
 
-	res.status(StatusCodes.OK).json({ reviews, count: reviews.length });
+	res
+		.status(StatusCodes.OK)
+		.json({ status: "OK", count: reviews.length , data: reviews});
 };
 
 // GET SINGLE REVIEW
@@ -53,7 +55,7 @@ const getSingleReview = async (req, res) => {
 		throw new CustomError.NotFoundError(`No review with id ${reviewId}`);
 	}
 
-	res.status(StatusCodes.OK).json({ review });
+	res.status(StatusCodes.OK).json({ status: "OK", data: review });
 };
 
 // GET SINGLE PRODUCT REVIEWS
@@ -82,7 +84,7 @@ const updateReview = async (req, res) => {
 	review.comment = comment;
 
 	await review.save();
-	res.status(StatusCodes.OK).json({ review });
+	res.status(StatusCodes.OK).json({ status: "OK", data: review });
 };
 
 // DELETE REVIEW
@@ -97,7 +99,7 @@ const deleteReview = async (req, res) => {
 
 	checkPermissions(req.user, review.user);
 	await review.remove();
-	res.status(StatusCodes.OK).json({ msg: "Success! Review removed" });
+	res.status(StatusCodes.OK).json({status: "OK", msg: "Success! Review removed" });
 };
 
 module.exports = {

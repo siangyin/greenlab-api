@@ -78,13 +78,15 @@ const createOrder = async (req, res) => {
 
 	return res
 		.status(StatusCodes.CREATED)
-		.json({ order, clientSecret: order.clientSecret });
+		.json({ status: "OK", data: order, clientSecret: order.clientSecret });
 };
 
 // GET ALL ORDERS
 const getAllOrders = async (req, res) => {
 	const orders = await Order.find({});
-	return res.status(StatusCodes.OK).json({ orders, count: orders.length });
+	return res
+		.status(StatusCodes.OK)
+		.json({ status: "OK", count: orders.length, data: orders });
 };
 
 // GET SINGLE ORDER
@@ -97,13 +99,15 @@ const getSingleOrder = async (req, res) => {
 	checkPermissions(req.user, order.user);
 	console.log(req.user);
 	console.log(order.user);
-	res.status(StatusCodes.OK).json({ order });
+	res.status(StatusCodes.OK).json({ status: "OK", data: order });
 };
 
 // GET CURRENT USER ORDER
 const getCurrentUserOrders = async (req, res) => {
 	const orders = await Order.find({ user: req.user.userID });
-	res.status(StatusCodes.OK).json({ orders, count: orders.length });
+	res
+		.status(StatusCodes.OK)
+		.json({ status: "OK",count: orders.length,  data: orders });
 };
 
 // UPDATE ORDER
@@ -120,7 +124,7 @@ const updateOrder = async (req, res) => {
 		new: true,
 		runValidators: true,
 	});
-	res.status(StatusCodes.OK).json({ order });
+	res.status(StatusCodes.OK).json({ status: "OK", data: order });
 };
 
 module.exports = {

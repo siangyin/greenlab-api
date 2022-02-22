@@ -2,7 +2,7 @@ require("dotenv").config();
 require("express-async-errors");
 const express = require("express");
 const app = express();
-const PORT = process.env.PORT || 5050;
+const PORT = process.env.PORT || 5000;
 const connectDB = require("./db/connectDB");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
@@ -33,8 +33,8 @@ app.use(helmet());
 app.use(
 	cors({
 		origin: process.env.FE_URL,
-		// methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD", "DELETE", "PATCH"],
-		// credentials: true,
+		methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD", "DELETE", "PATCH"],
+		credentials: true,
 	})
 );
 app.use(xss());

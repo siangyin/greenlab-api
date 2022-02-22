@@ -42,7 +42,7 @@ const createCartItem = async (req, res) => {
 		// no user data, create new cart item
 		cart = await CartItem.create({ ...queryObj, productId: product._id });
 
-		return res.status(StatusCodes.CREATED).json(cart);
+		return res.status(StatusCodes.CREATED).json({ status: "OK", data: cart });
 	}
 
 	// else, mean have userId, check if same user have same item in cart db.
@@ -65,7 +65,9 @@ const createCartItem = async (req, res) => {
 			}
 		);
 
-		return res.status(StatusCodes.CREATED).json(updatedcart);
+		return res
+			.status(StatusCodes.CREATED)
+			.json({ status: "OK", data: updatedcart });
 	}
 
 	queryObj.qty = Number(qty);
@@ -74,13 +76,15 @@ const createCartItem = async (req, res) => {
 		productId: product._id,
 		userId: userId,
 	});
-	return res.status(StatusCodes.CREATED).json(cart);
+	return res.status(StatusCodes.CREATED).json({ status: "OK", data: cart });
 };
 
 const getAllCartItems = async (req, res) => {
 	const carts = await CartItem.find({});
 
-	return res.status(StatusCodes.OK).json({ carts, count: carts.length });
+	return res
+		.status(StatusCodes.OK)
+		.json({ status: "OK", count: carts.length, data: carts });
 };
 
 const getSingleCartItem = async (req, res) => {
@@ -91,7 +95,7 @@ const getSingleCartItem = async (req, res) => {
 	if (!cart) {
 		throw new CustomError.NotFoundError(`No cart with id : ${id}`);
 	}
-	return res.status(StatusCodes.OK).json({ cart });
+	return res.status(StatusCodes.OK).json({ status: "OK", data: cart });
 };
 
 const getCurrentUserCartItems = async (req, res) => {
@@ -99,7 +103,7 @@ const getCurrentUserCartItems = async (req, res) => {
 	const carts = await CartItem.find({ userId: req.user.userID });
 	return res
 		.status(StatusCodes.OK)
-		.json({ user: req.user, carts, count: carts.length });
+		.json({ user: req.user, status: "OK", count: carts.length, data: carts });
 };
 
 const updateCartItem = async (req, res) => {
@@ -138,7 +142,7 @@ const updateCartItem = async (req, res) => {
 		}
 	);
 
-	return res.status(StatusCodes.OK).json({ updatedcart });
+	return res.status(StatusCodes.OK).json({ status: "OK", data: updatedcart });
 };
 
 const deleteCartItem = async (req, res) => {
@@ -149,7 +153,9 @@ const deleteCartItem = async (req, res) => {
 	}
 
 	await cart.remove();
-	res.status(StatusCodes.OK).json({ msg: "Success! Cart item removed." });
+	res
+		.status(StatusCodes.OK)
+		.json({ status: "OK", msg: "Success! Cart item removed." });
 };
 
 module.exports = {

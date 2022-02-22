@@ -28,7 +28,7 @@ const register = async (req, res) => {
 	const tokenUser = createTokenUser(user);
 
 	attachCookiesToResponse({ res, user: tokenUser });
-	res.status(StatusCodes.CREATED).json({ user: tokenUser });
+	res.status(StatusCodes.CREATED).json({ status: "OK",user: tokenUser });
 };
 
 // LOGIN
@@ -52,7 +52,7 @@ const login = async (req, res) => {
 	const tokenUser = createTokenUser(user);
 
 	attachCookiesToResponse({ res, user: tokenUser });
-	res.status(StatusCodes.CREATED).json({ user: tokenUser });
+	res.status(StatusCodes.CREATED).json({ status: "OK", user: tokenUser });
 };
 
 // LOGOUT
@@ -61,7 +61,7 @@ const logout = async (req, res) => {
 		httpOnly: true,
 		expires: new Date(Date.now()),
 	});
-	res.status(StatusCodes.OK).json({ msg: "user logged out!" });
+	res.status(StatusCodes.OK).json({ status: "OK", msg: "user logged out!" });
 };
 
 // VERIFY EMAIL

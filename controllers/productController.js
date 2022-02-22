@@ -9,13 +9,15 @@ const fs = require("fs");
 const createProduct = async (req, res) => {
 	req.body.createdBy = req.user.userID;
 	const product = await Product.create(req.body);
-	res.status(StatusCodes.CREATED).json({ product });
+	res.status(StatusCodes.CREATED).json({ status: "OK", data: product });
 };
 
 // GET ALL PRODUCTS
 const getAllProducts = async (req, res) => {
 	const products = await Product.find({});
-	res.status(StatusCodes.OK).json({ products, count: products.length });
+	res
+		.status(StatusCodes.OK)
+		.json({ status: "OK", count: products.length, data: products });
 };
 
 // GET SINGLE PRODUCT
@@ -28,7 +30,7 @@ const getSingleProduct = async (req, res) => {
 	if (!product) {
 		throw new CustomError.NotFoundError(`No product with id : ${productId}`);
 	}
-	res.status(StatusCodes.OK).json({ product });
+	res.status(StatusCodes.OK).json({ status: "OK", data: product });
 };
 
 // UPDATE PRODUCT
@@ -44,7 +46,7 @@ const updateProduct = async (req, res) => {
 		throw new CustomError.NotFoundError(`No product with id : ${productId}`);
 	}
 
-	res.status(StatusCodes.OK).json({ product });
+	res.status(StatusCodes.OK).json({ status: "OK", data: product });
 };
 
 // DELETE PRODUCT
@@ -58,7 +60,9 @@ const deleteProduct = async (req, res) => {
 	}
 
 	await product.remove();
-	res.status(StatusCodes.OK).json({ msg: "Success! Product removed." });
+	res
+		.status(StatusCodes.OK)
+		.json({ status: "OK", msg: "Success! Product removed." });
 };
 
 // const uploadImage = async (req, res) => {
@@ -117,7 +121,7 @@ const uploadImage = async (req, res) => {
 		}
 	);
 
-	return res.status(StatusCodes.OK).json(product);
+	return res.status(StatusCodes.OK).json({ status: "OK", data: product });
 };
 
 module.exports = {

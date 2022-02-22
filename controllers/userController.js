@@ -15,7 +15,7 @@ const getAllUsers = async (req, res) => {
 	// console.log(req.user);
 	// { name: 'siangyin', userID: '6206712bc2255c8b3f6f946b', role: 'user' }
 	const users = await User.find({ role: "user" }).select("-password");
-	res.status(StatusCodes.OK).json({ users });
+	res.status(StatusCodes.OK).json({ status: "OK", data: users });
 };
 
 // GET SINGLE USER
@@ -25,7 +25,7 @@ const getSingleUser = async (req, res) => {
 		throw new CustomError.NotFoundError(`No user with id : ${req.params.id}`);
 	}
 	checkPermissions(req.user, user._id);
-	res.status(StatusCodes.OK).json({ user });
+	res.status(StatusCodes.OK).json({ status: "OK", data: user });
 };
 
 // SHOW CURRENT USER
@@ -41,7 +41,7 @@ const showCurrentUser = async (req, res) => {
 		"orderItems"
 	);
 
-	res.status(StatusCodes.OK).json({ user, address, order });
+	res.status(StatusCodes.OK).json({ status: "OK", user, address, order });
 };
 
 // need to be able to update personal info > to be continue
@@ -82,7 +82,9 @@ const updateUser = async (req, res) => {
 
 	const tokenUser = createTokenUser(user);
 	attachCookiesToResponse({ res, user: tokenUser });
-	res.status(StatusCodes.OK).json({ user: tokenUser, updateUserAdd });
+	res
+		.status(StatusCodes.OK)
+		.json({ user: tokenUser, status: "OK", data: updateUserAdd });
 };
 
 // UPDATE USER PASSWORD
@@ -102,7 +104,9 @@ const updateUserPassword = async (req, res) => {
 	user.password = newPassword;
 
 	await user.save();
-	res.status(StatusCodes.OK).json({ msg: "Success! Password Updated." });
+	res
+		.status(StatusCodes.OK)
+		.json({ status: "OK", msg: "Success! Password Updated." });
 };
 
 module.exports = {
