@@ -87,9 +87,11 @@ const updateUser = async (req, res) => {
 
 	const tokenUser = createTokenUser(user);
 	attachCookiesToResponse({ res, user: tokenUser });
+	user = await User.findOne({ _id: userID }).select("-password");
+
 	res
 		.status(StatusCodes.OK)
-		.json({ user: tokenUser, status: "OK", data: updateUserAdd });
+		.json({ status: "OK", user: user, address: updateUserAdd });
 };
 
 // UPDATE USER PASSWORD
