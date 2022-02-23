@@ -106,7 +106,7 @@ const getCurrentUserCartItems = async (req, res) => {
 	const { userId } = req.query;
 	const user = await User.findOne({ _id: userId }).select("-password");
 	// console.log(req.user); //{ name: 'kookooo', userID: '620d312869493e2df5937863', role: 'admin' }
-	const carts = await CartItem.find({ userId: userId });
+	const carts = await CartItem.find({ userId: userId, status: false });
 	return res
 		.status(StatusCodes.OK)
 		.json({ status: "OK", user: user, count: carts.length, data: carts });
