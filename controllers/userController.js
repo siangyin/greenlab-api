@@ -14,7 +14,7 @@ const {
 const getAllUsers = async (req, res) => {
 	// console.log(req.user);
 	// { name: 'siangyin', userID: '6206712bc2255c8b3f6f946b', role: 'user' }
-	const users = await User.find({ role: "user" }).select("-password");
+	const users = await User.find({}).select("-password");
 	res.status(StatusCodes.OK).json({ status: "OK", data: users });
 };
 
