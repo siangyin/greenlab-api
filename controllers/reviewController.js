@@ -6,6 +6,7 @@ const { checkPermissions } = require("../utils");
 
 // CREATE REVIEW
 const createReview = async (req, res) => {
+	const { userId } = req.query;
 	const { product: productId } = req.body;
 
 	const isValidProduct = await Product.findOne({ _id: productId });
@@ -16,7 +17,7 @@ const createReview = async (req, res) => {
 
 	const alreadySubmitted = await Review.findOne({
 		product: productId,
-		user: req.user.userID,
+		user: userId,
 	});
 
 	if (alreadySubmitted) {
@@ -25,7 +26,7 @@ const createReview = async (req, res) => {
 		);
 	}
 
-	req.body.user = req.user.userID;
+	req.body.user = userId;
 
 	const review = await Review.create(req.body);
 	res.status(StatusCodes.CREATED).json({ status: "OK", data: review });
@@ -42,7 +43,7 @@ const getAllReviews = async (req, res) => {
 
 	res
 		.status(StatusCodes.OK)
-		.json({ status: "OK", count: reviews.length , data: reviews});
+		.json({ status: "OK", count: reviews.length, data: reviews });
 };
 
 // GET SINGLE REVIEW
@@ -75,9 +76,9 @@ const updateReview = async (req, res) => {
 	if (!review) {
 		throw new CustomError.NotFoundError(`No review with id ${reviewId}`);
 	}
-	console.log(req.user.role);
-	console.log(review.user);
-	checkPermissions(req.user, review.user);
+	// console.log(req.user.role);
+	// console.log(review.user);
+	// checkPermissions(req.user, review.user);
 
 	review.rating = rating;
 	review.title = title;
@@ -97,9 +98,11 @@ const deleteReview = async (req, res) => {
 		throw new CustomError.NotFoundError(`No review with id ${reviewId}`);
 	}
 
-	checkPermissions(req.user, review.user);
+	// checkPermissions(req.user, review.user);
 	await review.remove();
-	res.status(StatusCodes.OK).json({status: "OK", msg: "Success! Review removed" });
+	res
+		.status(StatusCodes.OK)
+		.json({ status: "OK", msg: "Success! Review removed" });
 };
 
 module.exports = {

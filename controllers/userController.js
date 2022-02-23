@@ -24,22 +24,27 @@ const getSingleUser = async (req, res) => {
 	if (!user) {
 		throw new CustomError.NotFoundError(`No user with id : ${req.params.id}`);
 	}
-	checkPermissions(req.user, user._id);
-	res.status(StatusCodes.OK).json({ status: "OK", data: user });
+	// checkPermissions(req.user, user._id);
+
+	const address = await Address.findOne({ userId: req.params.id });
+	const order = await Order.findOne({ userId: req.params.id }).populate(
+		"orderItems"
+	);
+
+	res.status(StatusCodes.OK).json({ status: "OK", user, address, order });
 };
 
 // SHOW CURRENT USER
 const showCurrentUser = async (req, res) => {
-	const user = await User.findOne({ _id: req.user.userID }).select("-password");
+	const { userId } = req.query;
+	const user = await User.findOne({ _id: userId }).select("-password");
 
 	if (!user) {
 		throw new CustomError.NotFoundError(`No user with id : ${req.params.id}`);
 	}
 
-	const address = await Address.findOne({ userId: req.user.userID });
-	const order = await Order.findOne({ userId: req.user.userID }).populate(
-		"orderItems"
-	);
+	const address = await Address.findOne({ userId });
+	const order = await Order.findOne({ userId }).populate("orderItems");
 
 	res.status(StatusCodes.OK).json({ status: "OK", user, address, order });
 };

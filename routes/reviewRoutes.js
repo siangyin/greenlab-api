@@ -11,12 +11,20 @@ const {
 
 const { authenticateUser } = require("../middleware/authentication");
 
-router.route("/").get(getAllReviews).post(authenticateUser, createReview);
+// router.route("/").get(getAllReviews).post(authenticateUser, createReview);
+
+// router
+// 	.route("/:id")
+// 	.get(getSingleReview)
+// 	.patch(authenticateUser, updateReview)
+// 	.delete(authenticateUser, deleteReview);
+
+router.route("/").get(getAllReviews).post(createReview);
 
 router
 	.route("/:id")
 	.get(getSingleReview)
-	.patch(authenticateUser, updateReview)
-	.delete(authenticateUser, deleteReview);
+	.patch(updateReview)
+	.delete(deleteReview);
 
 module.exports = router;

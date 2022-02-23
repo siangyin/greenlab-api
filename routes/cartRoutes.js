@@ -15,13 +15,16 @@ const {
 	authorizePermissions,
 } = require("../middleware/authentication");
 
-router
-	.route("/")
-	.post(createCartItem)
-	.get(authenticateUser, getCurrentUserCartItems);
-router
-	.route("/all-items")
-	.get([authenticateUser, authorizePermissions("admin")], getAllCartItems);
+// router
+// 	.route("/")
+// 	.post(createCartItem)
+// 	.get(authenticateUser, getCurrentUserCartItems);
+// router
+// 	.route("/all-items")
+// 	.get([authenticateUser, authorizePermissions("admin")], getAllCartItems);
+
+router.route("/").post(createCartItem).get(getCurrentUserCartItems);
+router.route("/all-items").get(getAllCartItems);
 
 router
 	.route("/:id")

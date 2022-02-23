@@ -14,16 +14,20 @@ const {
 	authorizePermissions,
 } = require("../middleware/authentication");
 
-router
-	.route("/")
-	.post(authenticateUser, createOrder)
-	.get([authenticateUser, authorizePermissions("admin")], getAllOrders);
+router;
+// 	.route("/")
+// 	.post(authenticateUser, createOrder)
+// 	.get([authenticateUser, authorizePermissions("admin")], getAllOrders);
 
-router.route("/myorders").get(authenticateUser, getCurrentUserOrders);
+// router.route("/myorders").get(authenticateUser, getCurrentUserOrders);
 
-router
-	.route("/:id")
-	.get(authenticateUser, getSingleOrder)
-	.patch(authenticateUser, updateOrder);
+// router
+// 	.route("/:id")
+// 	.get(authenticateUser, getSingleOrder)
+// 	.patch(authenticateUser, updateOrder);
+
+router.route("/").post(createOrder).get(getAllOrders);
+router.route("/myorders").get(getCurrentUserOrders);
+router.route("/:id").get(getSingleOrder).patch(updateOrder);
 
 module.exports = router;

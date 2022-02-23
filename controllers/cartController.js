@@ -18,7 +18,7 @@ const createCartItem = async (req, res) => {
 	// req.query return object so can directly pass in .find(obj)
 
 	let queryObj = {};
-	const { productId, qty, userId } = req.query;
+	const { productId, qty, userId } = req.body;
 
 	if (!productId || !qty) {
 		throw new CustomError.NotFoundError(`Must provide productId and qty`);
@@ -35,15 +35,6 @@ const createCartItem = async (req, res) => {
 	queryObj.price = product.price;
 
 	let cart;
-
-	if (!userId) {
-		queryObj.qty = qty;
-
-		// no user data, create new cart item
-		cart = await CartItem.create({ ...queryObj, productId: product._id });
-
-		return res.status(StatusCodes.CREATED).json({ status: "OK", data: cart });
-	}
 
 	// else, mean have userId, check if same user have same item in cart db.
 	cart = await CartItem.findOne({
@@ -65,9 +56,14 @@ const createCartItem = async (req, res) => {
 			}
 		);
 
+		const updatedcarts = await CartItem.find({
+			userId: userId,
+			status: false,
+		});
+
 		return res
 			.status(StatusCodes.CREATED)
-			.json({ status: "OK", data: updatedcart });
+			.json({ status: "OK", data: updatedcarts });
 	}
 
 	queryObj.qty = Number(qty);
@@ -76,7 +72,15 @@ const createCartItem = async (req, res) => {
 		productId: product._id,
 		userId: userId,
 	});
-	return res.status(StatusCodes.CREATED).json({ status: "OK", data: cart });
+
+	const updatedcarts = await CartItem.find({
+		userId: userId,
+		status: false,
+	});
+
+	return res
+		.status(StatusCodes.CREATED)
+		.json({ status: "OK", data: updatedcarts });
 };
 
 const getAllCartItems = async (req, res) => {
@@ -99,11 +103,13 @@ const getSingleCartItem = async (req, res) => {
 };
 
 const getCurrentUserCartItems = async (req, res) => {
+	const { userId } = req.query;
+	const user = await User.findOne({ _id: userId }).select("-password");
 	// console.log(req.user); //{ name: 'kookooo', userID: '620d312869493e2df5937863', role: 'admin' }
-	const carts = await CartItem.find({ userId: req.user.userID });
+	const carts = await CartItem.find({ userId: userId });
 	return res
 		.status(StatusCodes.OK)
-		.json({ user: req.user, status: "OK", count: carts.length, data: carts });
+		.json({ status: "OK", user: user, count: carts.length, data: carts });
 };
 
 const updateCartItem = async (req, res) => {

@@ -13,17 +13,15 @@ const CartItemSchema = mongoose.Schema(
 		orderId: {
 			type: mongoose.Schema.ObjectId,
 			ref: "Order",
-			required: false,
 		},
 		productId: {
 			type: mongoose.Schema.ObjectId,
 			ref: "Product",
-			required: false,
+			required: true,
 		},
 		userId: {
 			type: mongoose.Schema.ObjectId,
 			ref: "User",
-			required: false,
 		},
 	},
 	{ timestamps: true }

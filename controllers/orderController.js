@@ -14,7 +14,7 @@ const fakeStripeAPI = async ({ amount, currency }) => {
 
 // CREATE ORDER
 const createOrder = async (req, res) => {
-	const { orderItems: cartItems, shippingFee, address } = req.body;
+	const { orderItems: cartItems, shippingFee, address, userId } = req.body;
 
 	if (!cartItems || cartItems.length < 1) {
 		throw new CustomError.BadRequestError("No cart items provided");
@@ -61,7 +61,7 @@ const createOrder = async (req, res) => {
 		subtotal,
 		shippingFee,
 		clientSecret: paymentIntent.client_secret,
-		userId: req.user.userID,
+		userId: userId,
 		address: addresscheck._id,
 	});
 
@@ -96,18 +96,19 @@ const getSingleOrder = async (req, res) => {
 	if (!order) {
 		throw new CustomError.NotFoundError(`No order with id : ${orderId}`);
 	}
-	checkPermissions(req.user, order.user);
-	console.log(req.user);
+	// checkPermissions(req.user, order.user);
+	// console.log(req.user);
 	console.log(order.user);
 	res.status(StatusCodes.OK).json({ status: "OK", data: order });
 };
 
 // GET CURRENT USER ORDER
 const getCurrentUserOrders = async (req, res) => {
-	const orders = await Order.find({ user: req.user.userID });
+	const { userId } = req.query;
+	const orders = await Order.find({ user: userId });
 	res
 		.status(StatusCodes.OK)
-		.json({ status: "OK",count: orders.length,  data: orders });
+		.json({ status: "OK", count: orders.length, data: orders });
 };
 
 // UPDATE ORDER
@@ -118,7 +119,7 @@ const updateOrder = async (req, res) => {
 	if (!order) {
 		throw new CustomError.NotFoundError(`No order with id : ${orderId}`);
 	}
-	checkPermissions(req.user, order.user);
+	// checkPermissions(req.user, order.user);
 
 	order = await Order.findOneAndUpdate({ _id: orderId }, req.body, {
 		new: true,
