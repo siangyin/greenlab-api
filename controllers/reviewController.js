@@ -6,8 +6,7 @@ const { checkPermissions } = require("../utils");
 
 // CREATE REVIEW
 const createReview = async (req, res) => {
-	const { userId } = req.query;
-	const { product: productId } = req.body;
+	const { product: productId, userId } = req.body;
 
 	const isValidProduct = await Product.findOne({ _id: productId });
 

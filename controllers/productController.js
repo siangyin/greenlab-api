@@ -7,7 +7,6 @@ const fs = require("fs");
 
 // CREATE PRODUCT
 const createProduct = async (req, res) => {
-
 	// req.body.createdBy = req.user.userID;
 	const product = await Product.create(req.body);
 	res.status(StatusCodes.CREATED).json({ status: "OK", data: product });
