@@ -26,7 +26,7 @@ app.set("trust proxy", 1);
 app.use(
 	rateLimiter({
 		windowMs: 1500 * 60 * 1000,
-		max: 60000,
+		max: 600000,
 	})
 );
 app.use(helmet());
