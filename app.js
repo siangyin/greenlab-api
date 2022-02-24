@@ -32,7 +32,7 @@ app.use(
 app.use(helmet());
 app.use(
 	cors({
-		origin: process.env.FE_URL,
+		origin: process.env.FE_LOCAL,
 		methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD", "DELETE", "PATCH"],
 		credentials: true,
 	})
